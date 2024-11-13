@@ -56,3 +56,21 @@ if __name__ == "__main__":
         reminder_process = multiprocessing.Process(target=reminder, args=(reminders,))
         reminder_process.start()
         print("Все напоминания загружены и запущены. Программа работает в фоне...")
+
+# Возможность добавления новых напоминаний
+while True:
+    action = input("Хотите добавить новое напоминание? (да/нет): ")
+    if action.lower() == 'да':
+        message = input("Введите сообщение для напоминания: ")
+        remind_time_str = input("Введите дату и время для напоминания (ДД.ММ.ГГГГ ЧЧ:ММ): ")
+        remind_time = datetime.strptime(remind_time_str, '%d.%m.%Y %H:%M')
+        save_reminder_to_json(message, remind_time)
+        # Перезапуск процесса напоминаний с обновленным списком
+        reminders = load_reminders()
+        if reminder_process.is_alive():
+            reminder_process.terminate()
+        reminder_process = multiprocessing.Process(target=reminder, args=(reminders,))
+        reminder_process.start()
+        print("Новое напоминание добавлено и запущено.")
+    else:
+        break
